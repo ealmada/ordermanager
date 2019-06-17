@@ -13,7 +13,7 @@ here ![here](capture.png)
 
    Si tenemos una tabla de pedidos con muchos registros y columnas e incluso blobs:
     <br>
-    <h4>A nivel de base de datos: </h4>utilizariamos una base distribuida. 
+    <h4>A nivel de base de datos: </h4>Utilizaría una base distribuida. 
     En oracle pensariamos en un rac con varias instancias para la base.
     O evaluar utilizar una base de datos no relacional distribuida, utilizando varios nodos.
     En ambos casos, la necesidad de crear indices y evaluar el plan de ejecucion para 
@@ -30,7 +30,8 @@ here ![here](capture.png)
     guardar ese pedido cuando el recurso de la base de datos este disponible. 
    
 
-3- La implementacion de ajax se hizo con jquery. Ver el codigo. Tenga en cuenta que si bien 
+<h3>3- La implementacion</h3>
+ El lado del cliente con Ajax se hizo con jquery. Ver el codigo. Tenga en cuenta que si bien 
 todas las operaciones se pueden realizar, solo la inserción actualizará la tabla que se muestra en el sitio.
 No se implementaron tests.
 
