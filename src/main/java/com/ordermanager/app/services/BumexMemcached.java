@@ -33,12 +33,4 @@ public class BumexMemcached {
         cache.remove(key);
     }
 
-    public static BumexMemcached getBumexMemcached() {
-        return bumexMemcached;
-    }
-
-    public static void setBumexMemcached(BumexMemcached bumexMemcached) {
-        BumexMemcached.bumexMemcached = bumexMemcached;
-    }
-
 }
