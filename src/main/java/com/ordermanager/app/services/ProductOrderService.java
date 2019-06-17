@@ -33,7 +33,7 @@ public class ProductOrderService {
     }
 
     @GetMapping(value = "/pedidos/{idProductOrder}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ProductOrder selectProductOrderById(@PathVariable Integer idProductOrder){
+    public ResponseEntity<ProductOrder> selectProductOrderById(@PathVariable Integer idProductOrder){
         logger.info("Querying ProductOrder " + idProductOrder);
 
         logger.info("Looking for ProductOrder" + idProductOrder + " in cache");
@@ -44,7 +44,7 @@ public class ProductOrderService {
 
         if ( cachedProductOrder != null ){
             logger.debug("ProductOrder found in cache");
-            return cachedProductOrder;
+            return new ResponseEntity<ProductOrder>(cachedProductOrder, HttpStatus.OK);
         }
 
         logger.info("Looking for ProductOrder " + idProductOrder + " in DB");
@@ -52,19 +52,9 @@ public class ProductOrderService {
 
         if(!productOrder.isPresent()){
             logger.debug("ProductOrder " + idProductOrder + " not found.");
+            return new ResponseEntity<ProductOrder>(HttpStatus.NOT_FOUND);
         }
-        return productOrder.get();
-    }
-
-    public void delete(Integer idProductOrder){
-        logger.info("Removing product order " + idProductOrder);
-
-        productOrderDao.deleteById(idProductOrder);
-
-        logger.info("Removing product order from cache");
-        BumexMemcached.getInstance().delete( idProductOrder.toString() );
-
-        logger.info("Product Order " + idProductOrder + " successfully deleted.");
+        return new ResponseEntity<ProductOrder>(productOrder.get(), HttpStatus.OK);
     }
 
     @PostMapping(value = "/pedidos/create/", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -90,6 +80,23 @@ public class ProductOrderService {
         logger.info("Saving into the db " + productOrder.getId() );
         return new ResponseEntity<>(productOrderDao.save(productOrder), HttpStatus.OK);
 
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE, value = "pedidos/{idProductOrder}")
+    ResponseEntity<?> delete(@PathVariable Integer idProductOrder) {
+        try {
+            logger.info("Removing product order from cache");
+            BumexMemcached.getInstance().delete(idProductOrder.toString());
+
+            productOrderDao.deleteById(idProductOrder);
+            logger.info("Product Order " + idProductOrder + " successfully deleted.");
+
+            return new ResponseEntity<>("Data deleted successfully", HttpStatus.ACCEPTED);
+
+        } catch (Exception e) {
+            logger.info("Product Order " + idProductOrder + " Resource not found.");
+            return new ResponseEntity<>("Resource not found", HttpStatus.NOT_FOUND);
+        }
     }
 }
 

@@ -20,6 +20,7 @@
         <button type="button" class="btn search">Search</button>
         <button type="button" class="btn update">Update</button>
         <button type="button" class="btn insert">Insert</button>
+        <button type="button" class="btn delete">Delete</button>
     </div>
 
     <div class="col-sm-6">
@@ -98,7 +99,12 @@
         $("#amount").prop("readonly", false);
         $("#discount").prop("readonly", false);
         selectedOption="insert";
-
+    }else if(this.classList.contains("delete")){
+        $("#idOrder").prop("readonly", false);
+        $("#nameOrder").prop("readonly", true);
+        $("#amount").prop("readonly", true);
+        $("#discount").prop("readonly", true);
+        selectedOption = "delete";
     }
 });
 
@@ -110,8 +116,9 @@ function goToAction(){
     }else if(selectedOption=="update"){
         RestPut();
     }else if(selectedOption=="insert") {
-       RestPost();
-
+        RestPost();
+    }else if(selectedOption=="delete") {
+        RestDelete();
     }
 
 }
@@ -128,11 +135,17 @@ function refreshInsert(result) {
 
 var RestGet = function() {
 
-        $.get('/pedidos/' + $("#idOrder").val(), function(data, status){
-
+    $.ajax('/pedidos/'+$("#idOrder").val(), {
+        type: "GET",
+        contentType: "application/json",
+        success: function (data) {
+            alert("Data: " + JSON.stringify(data, null, '\t') + "\nStatus: " + status)
+        },
+        error: function (data){
             alert("Data: " + JSON.stringify(data, null, '\t') + "\nStatus: " + status);
-        });
-    };
+        }
+    });
+}
 
 var RestPost= function() {
 
@@ -168,6 +181,21 @@ var RestPut= function() {
             }
 
         });
-    }
+}
 
+var RestDelete= function() {
+
+    $.ajax('/pedidos/'+$("#idOrder").val(), {
+        type: "DELETE",
+        data: '{"id":'+parseInt($("#idOrder").val(), 10)+'}',
+        contentType: "application/json",
+        success: function () {
+            alert("Data: " + JSON.stringify(data, null, '\t') + "\nStatus: " + status);
+        },
+        error: function (data){
+            alert("Data: " + JSON.stringify(data, null, '\t') + "\nStatus: " + status);
+        }
+
+    });
+}
 </script>
